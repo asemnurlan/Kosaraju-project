@@ -5,7 +5,7 @@ public class DagLongestPath {
 
 
     public static class Run {
-        public final PathResult result; // stores longest distances in result.dist
+        public final PathResult result;
         public final DagMetrics metrics;
         public Run(PathResult r, DagMetrics m){ this.result = r; this.metrics = m; }
     }
@@ -16,7 +16,7 @@ public class DagLongestPath {
         DagMetrics M = new DagMetrics();
 
 
-// Build adjacency + indegrees
+
         List<List<Edge>> adj = new ArrayList<>(n);
         int[] indeg = new int[n];
         for (int i=0;i<n;i++) adj.add(new ArrayList<>());
@@ -26,8 +26,6 @@ public class DagLongestPath {
             indeg[e.v]++;
         }
 
-
-// Topo via Kahn
         ArrayDeque<Integer> q = new ArrayDeque<>();
         for (int i=0;i<n;i++) if (indeg[i]==0) q.add(i);
         int[] topo = new int[n]; int t=0;
@@ -48,7 +46,7 @@ public class DagLongestPath {
 
         for (int i=0;i<n;i++){
             int u = topo[i];
-            if (dist[u] <= PathResult.NINF/2) continue; // unreachable
+            if (dist[u] <= PathResult.NINF/2) continue;
             for (Edge e: adj.get(u)){
                 long nd = dist[u] + e.w;
                 M.relaxCount++;
