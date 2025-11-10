@@ -1,21 +1,23 @@
 package app;
 
-import common.Graph;
-import common.Metrics;
-import common.TaskGraphLoader;
-import common.TaskGraphLoader.Loaded;
-import scc.CondensationBuilder;
-import scc.CondensationBuilder.Condensation;
-import scc.KosarajuSCC;
+import common.*;
+import scc.*;
 import topo.TopoKahn;
 import java.io.File;
 import java.util.List;
+import common.TaskGraphLoader;
+import common.TaskGraphLoader.Loaded;
+
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        File file = new File("test.json");
+        String jsonPath = (args.length > 0) ? args[0] : "src/main/resources/test.json";
+        String key = (args.length > 1) ? args[1] : "small_1";
 
-        Loaded loaded = TaskGraphLoader.load(file);
+        System.out.println("CWD = " + System.getProperty("user.dir"));
+        System.out.println("Loading key: " + key + " from " + jsonPath);
+
+        Loaded loaded = TaskGraphLoader.load(new File(jsonPath), key);
         Graph g = loaded.graph;
 
         System.out.println("Loaded graph: n=" + g.n() + ", m=" + g.edgesCount());
@@ -30,7 +32,8 @@ public class Main {
         }
         System.out.println("SCC metrics: " + sccMetrics);
 
-        Condensation cond = CondensationBuilder.build(g, scc.compOf, scc.components.size());
+        CondensationBuilder.Condensation cond =
+                CondensationBuilder.build(g, scc.compOf, scc.components.size());
         Graph dag = cond.dag;
         System.out.println("Condensation DAG: nodes=" + dag.n() + ", edges=" + dag.edgesCount());
 
